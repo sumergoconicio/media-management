@@ -1,44 +1,79 @@
+######
+## Skeleton script that catalogues all files
+######
+
 import os
-import csv
 from datetime import datetime
+import pandas as pd
 
-def generate_file_index(folder_path, index_file):
-    """Generate a CSV index of files in the specified folder."""
-    with open(index_file, mode='w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(["absolute_file_path", "file_name", "file_size_bytes"])
+def get_folder_path():
+    """Gets a valid folder path from the user."""
+    while True:
+        folder_path = input("Please enter the folder path: ").strip()
+        if os.path.exists(folder_path):
+            return folder_path
+        print("Error: The specified path does not exist.")
 
-        for root, _, files in os.walk(folder_path):
-            for file_name in files:
-                file_path = os.path.join(root, file_name)
-                file_size = os.path.getsize(file_path)
-                writer.writerow([file_path, file_name, file_size])
 
-    print(f"Index created at {index_file}")
+def process_folder(folder_path):
+    """Recursively walks through a folder and generates a list of files and folders.
+
+    Args:
+        folder_path: The path to the folder to process.
+
+    Returns:
+        A pandas DataFrame containing the relative paths and file types.
+    """
+    titles = []
+    rel_paths = []
+    item_types = []
+
+    for root, dirs, files in os.walk(folder_path):
+        for item in dirs + files:
+            # Skip files that match the pattern "YYYYMMDDHHMMSS catalog.csv"
+            if item.endswith("catalog.csv"):
+                continue
+
+            full_path = os.path.join(root, item)
+            relative_path = os.path.relpath(full_path, folder_path)
+
+            if os.path.isdir(full_path):
+                item_type = "folder"
+            else:
+                item_type = os.path.splitext(item)[1][1:] or "no extension"
+
+            titles.append(item)
+            rel_paths.append(relative_path)
+            item_types.append(item_type)
+
+    df = pd.DataFrame({
+        'relative_path': rel_paths,
+        'file_type': item_types
+    })
+    df = df.sort_values('relative_path', ignore_index=True)
+    return df
+
+
+def write_to_csv(df, folder_path):
+    """Writes the DataFrame to a CSV file with a timestamped filename.
+
+    Args:
+        df: The pandas DataFrame to write.
+        folder_path: The folder where the CSV should be saved.
+    """
+    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+    output_filename = f"{timestamp} catalog.csv"
+    output_path = os.path.join(folder_path, output_filename)
+    df.to_csv(output_path, index=False)
+    print(f"Catalog has been saved to: {output_path}")
+
 
 def main():
-    # List of absolute paths to catalog
-    paths_to_catalog = [
-        # Add the absolute paths of folders to catalog here, e.g.,
-        # "/path/to/folder1",
-        # "/path/to/folder2",
-    ]
+    """Main function to orchestrate the script."""
+    folder_path = get_folder_path()
+    df = process_folder(folder_path)
+    write_to_csv(df, folder_path)
 
-    if not paths_to_catalog:
-        print("The list of paths to catalog is empty. Please add paths to the 'paths_to_catalog' list.")
-        return
-
-    for folder_path in paths_to_catalog:
-        # Check if the folder exists
-        if not os.path.exists(folder_path):
-            print(f"The folder {folder_path} does not exist. Skipping...")
-            continue
-
-        # Generate the index file
-        today = datetime.now().strftime("%Y%m%d")
-        folder_name = os.path.basename(folder_path.rstrip(os.sep))
-        index_file = os.path.join(os.getcwd(), f"{today}_{folder_name}_file_catalog.csv")
-        generate_file_index(folder_path, index_file)
 
 if __name__ == "__main__":
     main()
