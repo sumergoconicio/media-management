@@ -1,4 +1,6 @@
-# calibre catalog generator
+######
+## Cataloguing script specific for my eBook library
+######
 
 import os
 import csv
@@ -62,7 +64,7 @@ def generate_ebook_index(library_path, subfolders, index_file):
     print(f"Index created at {index_file}")
 
 def main():
-    library_path = "/volume1/library"
+    library_path = "/volume1/library" ### change this PATH to your preferred folder instead
     subfolders = [
         "books", "comics", "epulps", "kindle", "occult", "references", "textbooks"
     ]
