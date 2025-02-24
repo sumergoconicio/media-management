@@ -1,5 +1,8 @@
 ######
 ## Cataloguing script specific for my eBook library
+#### assumes ebook-libraries have been pre-formatted in Calibre's library structure
+#### assumes there are multiple ebook libraries in one overarching library folder
+#### creates a full CSV catalogue of the library (absolute_path, book_title, book_author, number of files, hasPDF (yes/no), hasEPUB (yes/no), hasMOBI (yes/no), hasCBR (yes/no), hasCBZ (yes/no))
 ######
 
 import os
