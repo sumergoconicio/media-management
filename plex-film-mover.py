@@ -1,3 +1,13 @@
+######
+## Plex film renamer and mover
+#### assumes that downloads have been pre-formatted for archival (with IMDb matched names and years... for my archival system anyway)
+#### takes films from SOURCE folder to DESTINATION folder with an first-alphabet check
+#### takes the first-alphabet of the folder to insert SOURCE/Aloha into DESTINATION/A/Aloha
+###### if the first word is "A " or "The ", then it takes the first-alphabet of the second word
+###### only moves files if a matching folder exists in the destination folder and/or that matching folder is empty (thus avoiding unexpected files or rewriting existing files)
+#### creates a full CSV catalogue of the DESTINATION for easy matching (absolute_path, film_name, release_year, number_of_video_files (mp4/mkv format))
+######
+
 import os
 import shutil
 import csv
