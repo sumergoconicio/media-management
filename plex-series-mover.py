@@ -1,3 +1,11 @@
+######
+## Plex series renamer and mover
+#### assumes that downloads have been pre-formatted for archival (with IMDb matched series titles, season folders and episode titles... for my archival system anyway)
+#### takes TVshows from SOURCE/Show-Name/Season X/Episode X folder to one of many possible DESTINATION folders as long as there is an existing/matching Show-Name folder
+#### creates a full CSV catalogue of the DESTINATION folders for easy matching (absolute_path, show_name, total_number_of_seasons, total_number_of_episodes)
+######
+
+
 import os
 import shutil
 import csv
